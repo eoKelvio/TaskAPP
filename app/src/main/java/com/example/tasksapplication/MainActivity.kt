@@ -1,5 +1,6 @@
 package com.example.tasksapplication
 
+import android.app.AlertDialog
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
@@ -9,6 +10,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.EditText
 import android.widget.TextView
 import com.example.tasksapplication.databinding.ActivityMainBinding
 import com.example.tasksapplication.FirstFragment
@@ -32,9 +34,67 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         binding.fab.setOnClickListener { view ->
-            val text = "Hello Catatau!"
-            val textView = findViewById<TextView>(R.id.textView_pending_tasks)
-            textView.setText(text)
+
+            var title = ""
+            val popupTitle = AlertDialog.Builder(this)
+            val textTitle = EditText(this)
+
+            var description = ""
+            val popupDescription = AlertDialog.Builder(this)
+            val textDescription = EditText(this)
+
+            val popupStatus = AlertDialog.Builder(this)
+            val statusOptions = arrayOf("Pendente", "Concluída")
+
+            var task : Task
+
+            val taskList = ArrayList<Task>()
+
+            fun TaskCreate(){
+
+                popupTitle.setTitle("Título")
+                popupTitle.setView(textTitle)
+                popupTitle.setPositiveButton("Ok") {
+                        dialog, _ ->
+                    title = textTitle.text.toString()
+
+                    popupDescription.setTitle("Descrição")
+                    popupDescription.setView(textDescription)
+                    popupDescription.setPositiveButton("Ok") {
+                            dialog, _ ->
+                        description = textDescription.text.toString()
+
+
+                        popupStatus.setTitle("Status")
+                        popupStatus.setItems(statusOptions){
+                            dialog, which ->
+                            val status = statusOptions[which]
+                            task = Task(title, description, status)
+
+                            taskList.add(task)
+
+                            Snackbar.make(view, task.toString(), Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show()
+
+                        }
+                        popupStatus.show()
+                    }
+                    popupDescription.setNegativeButton("Cancelar") {
+                            dialog, _ ->
+                        dialog.cancel()
+                    }
+                    popupDescription.show()
+                }
+                popupTitle.setNegativeButton("Cancelar") {
+                        dialog, _ ->
+                    dialog.cancel()
+                }
+                popupTitle.show()
+
+
+            }
+
+            TaskCreate()
         }
     }
 
